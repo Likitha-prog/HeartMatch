@@ -1,0 +1,329 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HeartMatch | Compatibility Checker</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 35px 16px;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #ffe0ec, #e9ddff, #fce4ff);
+    color: #44304f;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    color: #a33c82;
+    font-size: 36px;
+    margin-bottom: 8px;
+}
+
+header p {
+    color: #765b81;
+}
+
+.container {
+    max-width: 1050px;
+    margin: auto;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+}
+
+.card {
+    background: rgba(255,255,255,0.88);
+    padding: 25px;
+    border-radius: 22px;
+    box-shadow: 0 8px 30px rgba(120,70,130,0.12);
+}
+
+.card h2 {
+    color: #a33c82;
+    margin-top: 0;
+}
+
+label {
+    display: block;
+    margin: 13px 0 6px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e5c7e8;
+    border-radius: 10px;
+    background: #fffaff;
+    outline: none;
+    font-size: 14px;
+}
+
+input:focus, select:focus {
+    border-color: #bd70bd;
+}
+
+.section-title {
+    color: #a33c82;
+    margin-top: 22px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f0d9ed;
+}
+
+button {
+    display: block;
+    margin: 28px auto;
+    padding: 15px 35px;
+    border: none;
+    border-radius: 30px;
+    background: linear-gradient(90deg, #e45b9d, #9864d9);
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 6px 18px #d6a3d8;
+}
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+#result {
+    display: none;
+    max-width: 500px;
+    margin: 25px auto;
+    padding: 25px;
+    text-align: center;
+    background: white;
+    border-radius: 22px;
+    box-shadow: 0 8px 30px #d9b6dc;
+}
+
+#percentage {
+    font-size: 45px;
+    color: #d64e9b;
+    font-weight: bold;
+}
+
+@media(max-width: 700px) {
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    header h1 {
+        font-size: 28px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>💗 HeartMatch</h1>
+    <p>Discover how well two hearts match!</p>
+</header>
+
+<div class="container">
+
+<form id="matchForm">
+
+<div class="cards">
+
+<div class="card">
+<h2>💕 Person 1</h2>
+<div id="person1"></div>
+</div>
+
+<div class="card">
+<h2>💜 Person 2</h2>
+<div id="person2"></div>
+</div>
+
+</div>
+
+<button type="submit">✨ Calculate Compatibility</button>
+
+</form>
+
+<div id="result">
+    <h2>💗 Your Match Result</h2>
+    <div id="percentage"></div>
+    <h3 id="message"></h3>
+</div>
+
+</div>
+
+<script>
+function createFields(id) {
+    document.getElementById(id).innerHTML = `
+        <label>Name</label>
+        <input name="name" required placeholder="Enter name">
+
+        <label>Age</label>
+        <input name="age" type="number" min="18" required>
+
+        <label>Gender</label>
+        <select name="gender">
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+        </select>
+
+        <label>Country</label>
+        <input name="country" required placeholder="Your country">
+
+        <label>Profession</label>
+        <input name="profession" required placeholder="Your profession">
+
+        <label>Languages (comma separated)</label>
+        <input name="languages" placeholder="English, Kannada">
+
+        <label>Hobbies (comma separated)</label>
+        <input name="hobbies" placeholder="Music, Reading">
+
+        <label>Personality</label>
+        <select name="personality">
+            <option>Introvert</option>
+            <option>Extrovert</option>
+            <option>Ambivert</option>
+        </select>
+
+        <label>Lifestyle</label>
+        <select name="lifestyle">
+            <option>Simple</option>
+            <option>Adventurous</option>
+            <option>Active</option>
+            <option>Relaxed</option>
+        </select>
+
+        <label>Relationship Goal</label>
+        <select name="relationshipGoal">
+            <option>Friendship</option>
+            <option>Serious Relationship</option>
+            <option>Marriage</option>
+        </select>
+
+        <h3 class="section-title">Partner Preferences</h3>
+
+        <label>Minimum Preferred Age</label>
+        <input name="minAge" type="number" value="18" min="18">
+
+        <label>Maximum Preferred Age</label>
+        <input name="maxAge" type="number" value="40" min="18">
+
+        <label>Preferred Gender</label>
+        <select name="preferredGender">
+            <option>Any</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+        </select>
+
+        <label>Preferred Country</label>
+        <input name="preferredCountry" value="Any">
+
+        <label>Preferred Profession</label>
+        <input name="preferredProfession" value="Any">
+
+        <label>Preferred Personality</label>
+        <select name="preferredPersonality">
+            <option>Any</option>
+            <option>Introvert</option>
+            <option>Extrovert</option>
+            <option>Ambivert</option>
+        </select>
+
+        <label>Preferred Relationship Goal</label>
+        <select name="preferredRelationshipGoal">
+            <option>Any</option>
+            <option>Friendship</option>
+            <option>Serious Relationship</option>
+            <option>Marriage</option>
+        </select>
+    `;
+}
+
+createFields("person1");
+createFields("person2");
+
+function getPerson(id) {
+    const form = document.getElementById(id);
+    const values = {};
+
+    form.querySelectorAll("input, select").forEach(field => {
+        values[field.name] = field.value;
+    });
+
+    values.age = Number(values.age);
+    values.minAge = Number(values.minAge);
+    values.maxAge = Number(values.maxAge);
+
+    values.languages = values.languages
+        .split(",").map(x => x.trim()).filter(Boolean);
+
+    values.hobbies = values.hobbies
+        .split(",").map(x => x.trim()).filter(Boolean);
+
+    return values;
+}
+
+document.getElementById("matchForm")
+.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const data = {
+        person1: getPerson("person1"),
+        person2: getPerson("person2")
+    };
+
+    try {
+        const response = await fetch("/api/compatibility", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            throw new Error("Server error: " + response.status);
+        }
+
+        const result = await response.json();
+
+        document.getElementById("result").style.display = "block";
+        document.getElementById("percentage").textContent =
+            Number(result.percentage).toFixed(1) + "%";
+
+        document.getElementById("message").textContent =
+            result.message;
+
+    } catch (error) {
+        alert("Something went wrong. Please check the backend.");
+        console.error(error);
+    }
+});
+</script>
+
+</body>
+</html>
+
